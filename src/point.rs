@@ -1,4 +1,3 @@
-use rand::{Rand, Rng, random};
 use std::ops::{Sub, Mul, Add};
 use std::fmt;
 use ordered_float::OrderedFloat;
@@ -33,13 +32,6 @@ impl Point {
 impl fmt::Debug for Point {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "({0:.1}, {1:.1})", self.x(), self.y())
-    }
-}
-
-#[allow(unused_variables)]
-impl Rand for Point {
-    fn rand<R: Rng>(rng: &mut R) -> Point {
-        Point::new(random::<f64>(), random::<f64>())
     }
 }
 
@@ -87,11 +79,11 @@ impl PartialOrd for Point {
 
 impl Ord for Point {
     fn cmp(&self, other: &Point) -> Ordering {
-        if self.y > other.y { return Ordering::Greater; }
+        if self.y > other.y { Ordering::Greater }
         else if self.y == other.y {
-            if self.x < other.x { return Ordering::Greater; }
-            else if self.x == other.x { return Ordering::Equal; }
-            else { return Ordering::Less; }
-        } else { return Ordering::Less; }
+            if self.x < other.x { Ordering::Greater }
+            else if self.x == other.x { Ordering::Equal }
+            else { Ordering::Less }
+        } else { Ordering::Less }
     }
 }

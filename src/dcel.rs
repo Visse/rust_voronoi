@@ -1,3 +1,4 @@
+#![allow(clippy::new_without_default)]
 use std::fmt;
 use point::Point;
 use geometry::{Segment, segment_intersection};
@@ -5,6 +6,7 @@ use geometry::{Segment, segment_intersection};
 const NIL: usize = !0;
 
 /// Doubly Connected Edge List representation of a subdivision of the plane.
+#[allow(clippy::upper_case_acronyms)]
 pub struct DCEL {
     /// Vertices
     pub vertices: Vec<Vertex>,
@@ -38,7 +40,7 @@ impl DCEL {
     /// Get the origin of a halfedge by index
     pub fn get_origin(&self, edge: usize) -> Point {
         let origin_ind = self.halfedges[edge].origin;
-        return self.vertices[origin_ind].coordinates;
+        self.vertices[origin_ind].coordinates
     }
 
     /// Set the previous edge of all halfedges
@@ -48,7 +50,6 @@ impl DCEL {
         for edge_ind in 0..self.halfedges.len() {
             if seen_edges[edge_ind] { continue; }
             let mut current_ind = edge_ind;
-            seen_edges[current_ind];
             loop {
                 let next_edge = self.halfedges[current_ind].next;
                 self.halfedges[next_edge].prev = current_ind;
@@ -85,7 +86,7 @@ impl DCEL {
             current_edge = self.halfedges[current_twin].next;
             if current_edge == start_edge { break; }
         }
-        return result;
+        result
     }
 
     /// Remove a vertex and all attached halfedges.
@@ -153,8 +154,8 @@ pub struct HalfEdge {
     pub twin: usize, // index of halfedge
     /// The index of the next halfedge
     pub next: usize, // index of halfedge
-    face: usize, // index of face
-    prev: usize, // index of halfedge
+    pub face: usize, // index of face
+    pub prev: usize, // index of halfedge
     alive: bool,
 }
 
@@ -174,7 +175,7 @@ impl HalfEdge {
 #[derive(Debug)]
 /// A face of a DCEL
 pub struct Face {
-    outer_component: usize, // index of halfedge
+    pub outer_component: usize, // index of halfedge
     alive: bool,
 }
 
@@ -201,12 +202,8 @@ pub fn add_faces(dcel: &mut DCEL) {
     let num_halfedges = dcel.halfedges.len();
     let mut seen_edges = vec![false; num_halfedges];
 
-    let mut processed_edges = 0;
-    info!("Adding faces. There are {} halfedges.", num_halfedges);
-
     for edge_index in 0..num_halfedges {
         if seen_edges[edge_index] || !dcel.halfedges[edge_index].alive { continue; }
-        processed_edges += 1;
 
         let face_index = dcel.faces.len();
         let new_face = Face::new(edge_index);
@@ -220,7 +217,6 @@ pub fn add_faces(dcel: &mut DCEL) {
             if current_edge == edge_index { break; }
         }
     }
-    info!("Generated faces for {} edges.", processed_edges);
 }
 
 // does not handle the case where line goes through dcel vertex
@@ -314,18 +310,16 @@ fn get_line_intersections(seg: Segment, dcel: &DCEL) -> Vec<(Point, usize)> {
         seen_halfedges[index] = true;
         seen_halfedges[twin] = true;
     }
-    return intersections;
+    intersections
 }
 
 /// Constructs the line segments of the Voronoi diagram.
 pub fn make_line_segments(dcel: &DCEL) -> Vec<Segment> {
     let mut result = vec![];
     for halfedge in &dcel.halfedges {
-        if halfedge.origin != NIL && halfedge.next != NIL && halfedge.alive {
-            if dcel.halfedges[halfedge.next].origin != NIL {
-                result.push([dcel.vertices[halfedge.origin].coordinates,
-                    dcel.get_origin(halfedge.next)])
-            }
+        if halfedge.origin != NIL && halfedge.next != NIL && halfedge.alive && dcel.halfedges[halfedge.next].origin != NIL {
+            result.push([dcel.vertices[halfedge.origin].coordinates,
+                dcel.get_origin(halfedge.next)])
         }
     }
     result
@@ -348,8 +342,8 @@ pub fn make_polygons(dcel: &DCEL) -> Vec<Vec<Point>> {
     }
 
     // remove the outer face
-    result.sort_by(|a, b| a.len().cmp(&b.len()));
+    result.sort_by_key(|a| a.len());
     result.pop();
 
-    return result;
+    result
 }

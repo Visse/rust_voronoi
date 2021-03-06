@@ -1,5 +1,4 @@
 [package]
-
 name = "voronoi"
 version = "0.1.4"
 documentation = "https://docs.rs/voronoi/0.1.4/voronoi/"
@@ -11,7 +10,5 @@ readme = "Readme.md"
 license = "MIT"
 
 [dependencies]
-rand = "0.3"
 ordered-float = "0.5.0"
-log = "0.3"
 fnv = "1.0"

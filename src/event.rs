@@ -64,8 +64,7 @@ impl fmt::Debug for EventQueue {
         let mut queue_disp = String::new();
 
         for (index, event) in self.events.iter().enumerate() {
-            queue_disp.push_str(format!("{}: {:?}", index, event).as_str());
-            queue_disp.push_str("\n");
+            queue_disp.push_str(format!("{}: {:?}\n", index, event).as_str());
         }
 
         write!(f, "\n{}", queue_disp)
@@ -85,8 +84,6 @@ impl EventQueue {
             *id = event_id;
         }
 
-        let new_node_ind = self.events.len();
-        info!("pushing event {}", new_node_ind);
         self.events.push(event);
 
         event_id

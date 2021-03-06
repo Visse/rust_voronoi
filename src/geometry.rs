@@ -7,6 +7,7 @@ type TripleSite = (Point, Point, Point);
 pub type Segment = [Point; 2];
 
 pub fn segment_intersection(seg1: Segment, seg2: Segment) -> Option<Point> {
+    #![allow(clippy::many_single_char_names)]
     let a = seg1[0];
     let c = seg2[0];
     let r = seg1[1] - a;
@@ -23,13 +24,11 @@ pub fn segment_intersection(seg1: Segment, seg2: Segment) -> Option<Point> {
 
     if t < 0.0 || t > 1.0 || u < 0.0 || u > 1.0 { return None; }
 
-    return Some(a + r * t);
+    Some(a + r * t)
 }
 
 pub fn circle_bottom(triple_site: TripleSite) -> Option<OrderedFloat<f64>> {
-    let circle_center = circle_center(triple_site);
-    if let None = circle_center { return None; }
-    let circle_center = circle_center.unwrap();
+    let circle_center = circle_center(triple_site)?;
 
     let (_, _, p3) = triple_site;
     let x3 = p3.x();
@@ -39,7 +38,7 @@ pub fn circle_bottom(triple_site: TripleSite) -> Option<OrderedFloat<f64>> {
 
     let r = ((x3 - x_cen) * (x3 - x_cen) + (y3 - y_cen) * (y3 - y_cen)).sqrt();
 
-    return Some(OrderedFloat::<f64>(y_cen - r));
+    Some(OrderedFloat::<f64>(y_cen - r))
 }
 
 pub fn circle_center(triple_site: TripleSite) -> Option<Point> {
@@ -71,7 +70,7 @@ pub fn circle_center(triple_site: TripleSite) -> Option<Point> {
         (c1 - b1 * y_cen) / a1
     };
 
-    return Some(Point::new(x_cen, y_cen));
+    Some(Point::new(x_cen, y_cen))
 }
 
 // see http://www.kmschaal.de/Diplomarbeit_KevinSchaal.pdf, pg 27
@@ -109,7 +108,7 @@ pub fn get_breakpoint_x(bp: &BreakPoint, yl: f64) -> f64 {
     };
     x_bp += ax; // shift back to original frame
 
-    return x_bp;
+    x_bp
 }
 
 // TODO: handle py == yl case
@@ -122,7 +121,7 @@ pub fn get_breakpoint_y(bp: &BreakPoint, yl: f64) -> f64 {
     let numer = (px - bp_x) * (px - bp_x);
     let denom = 2. * (py - yl);
 
-    return numer / denom + (py + yl) / 2.;
+    numer / denom + (py + yl) / 2.
 }
 
 #[cfg(test)]
